@@ -18,7 +18,7 @@ Pascal bindings that allow you to use **SDL** and other useful libraries with <a
 - <a href="https://www.embarcadero.com/products/delphi/starter" target="_blank">Delphi Community Edition</a> (Win64 platform only)
 
 ### Usage
-You simply add `SDL` to your uses section and everything will be linked in your executable, ready for use with no DLLs to maintain. You will have direct access to all the aforementioned libraries.
+You simply add `SDL` to your uses section and everything will be linked into your executable, ready for use with no DLLs to maintain. You will have direct access to all the aforementioned libraries.
 
 ### Support
 - <a href="https://github.com/tinyBigGAMES/SDL/issues" target="_blank">Issues</a>
