@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{D290F4AE-90B6-4D69-9ADE-A094AD3B7A02}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="..\examples\001.HelloSDL\HelloSDL.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\examples\002.BasicImage\BasicImage.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="HelloSDL">
+        <MSBuild Projects="..\examples\001.HelloSDL\HelloSDL.dproj"/>
+    </Target>
+    <Target Name="HelloSDL:Clean">
+        <MSBuild Projects="..\examples\001.HelloSDL\HelloSDL.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="HelloSDL:Make">
+        <MSBuild Projects="..\examples\001.HelloSDL\HelloSDL.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BasicImage">
+        <MSBuild Projects="..\examples\002.BasicImage\BasicImage.dproj"/>
+    </Target>
+    <Target Name="BasicImage:Clean">
+        <MSBuild Projects="..\examples\002.BasicImage\BasicImage.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BasicImage:Make">
+        <MSBuild Projects="..\examples\002.BasicImage\BasicImage.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="HelloSDL;BasicImage"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="HelloSDL:Clean;BasicImage:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="HelloSDL:Make;BasicImage:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

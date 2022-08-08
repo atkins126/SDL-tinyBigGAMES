@@ -3819,6 +3819,10 @@ var
   IMG_FreeAnimation: procedure(anim: PIMG_Animation); cdecl;
   IMG_LoadGIFAnimation_RW: function(src: PSDL_RWops): PIMG_Animation; cdecl;
 
+function SDL_LoadBMP(const file_: PUTF8Char): PSDL_Surface; cdecl;
+function SDL_BlitSurface(src: PSDL_Surface; const srcrect: PSDL_Rect; dst: PSDL_Surface; dstrect: PSDL_Rect): Integer; cdecl;
+
+
 implementation
 
 {$R SDL.res}
@@ -3827,7 +3831,18 @@ uses
   System.SysUtils,
   System.Classes,
   System.IOUtils,
+  System.Zip,
   WinApi.Windows;
+
+function SDL_LoadBMP(const file_: PUTF8Char): PSDL_Surface;
+begin
+  Result := SDL_LoadBMP_RW(SDL_RWFromFile(file_, 'rb'), SDL_TRUE);
+end;
+
+function SDL_BlitSurface(src: PSDL_Surface; const srcrect: PSDL_Rect; dst: PSDL_Surface; dstrect: PSDL_Rect): Integer;
+begin
+  Result := SDL_UpperBlit(src, srcrect, dst, dstrect);
+end;
 
 procedure GetExports(const aDLLHandle: THandle);
 begin
@@ -4466,7 +4481,7 @@ begin
   SDL_LockTexture := GetProcAddress(aDLLHandle, 'SDL_LockTexture');
   SDL_LockTextureToSurface := GetProcAddress(aDLLHandle, 'SDL_LockTextureToSurface');
   SDL_log := GetProcAddress(aDLLHandle, 'SDL_log');
-  SDL_Log_ := GetProcAddress(aDLLHandle, 'SDL_Log_');
+  SDL_Log_ := GetProcAddress(aDLLHandle, 'SDL_Log');
   SDL_log10 := GetProcAddress(aDLLHandle, 'SDL_log10');
   SDL_log10f := GetProcAddress(aDLLHandle, 'SDL_log10f');
   SDL_LogCritical := GetProcAddress(aDLLHandle, 'SDL_LogCritical');
@@ -4917,6 +4932,7 @@ end;
 // ==========================================================================
 const
   cDllResName  = '1f23f1f8af74435dab2bda628c6f4c97';
+  cDLLFilename = 'SDL2.dll';
   
 var
   uDllHandle: THandle = 0;
@@ -4931,6 +4947,10 @@ procedure LoadDLL;
 var
   LResStream: TResourceStream;
   LPath: string;
+  LZipFile: TZipFile;
+  LZipStream: TStream;
+  LZipFileStream: TFileStream;
+  LZipHeader: TZipHeader;
 begin
   if uDllHandle <> 0 then Exit;
   if not Boolean((FindResource(HInstance, PChar(cDllResName), RT_RCDATA) <> 0)) then AbortDLL;
@@ -4938,7 +4958,27 @@ begin
   try
     LPath := TPath.Combine(TPath.GetTempPath, TPath.GetGUIDFileName.ToLower + '.tmp');
     LResStream.Position := 0;
-    LResStream.SaveToFile(LPath);
+    if not TZipFile.IsValid(LResStream) then AbortDLL;
+    LZipFile := TZipFile.Create;
+    try
+      LResStream.Position := 0;
+      LZipFile.Open(LResStream, zmRead);
+      LZipFile.Read(cDLLFilename, LZipStream, LZipHeader);
+      try
+        if not Assigned(LZipStream) then AbortDLL;
+        LZipFileStream := TFile.Create(LPath);
+        try
+          LZipStream.Position := 0;
+          LZipFileStream.CopyFrom(LZipStream);
+        finally
+          LZipFileStream.Free;
+        end;
+      finally
+        LZipStream.Free;
+      end;
+    finally
+      LZipFile.Free;
+    end;
     if not TFile.Exists(LPath) then AbortDLL;
     uDllFilename := LPath;
     uDllHandle := SafeLoadLibrary(uDllFilename);
