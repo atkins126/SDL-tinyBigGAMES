@@ -24,7 +24,6 @@ Pascal bindings that allow you to use **SDL** and other useful libraries with <a
 ### Support
 - <a href="https://github.com/tinyBigGAMES/SDL/issues" target="_blank">Issues</a>
 - <a href="https://github.com/tinyBigGAMES/SDL/discussions" target="_blank">Discussions</a>
-- <a href="https://tinybiggames.com/contact/" target="_blank">Contact</a>
 - <a href="https://libsdl.org" target="_blank">SDL Website</a>
 - <a href="https://lazyfoo.net/tutorials/SDL/index.php" target="_blank">SDL Tutorials</a> 
 
